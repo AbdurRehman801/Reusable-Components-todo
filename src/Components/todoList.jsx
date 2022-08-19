@@ -3,29 +3,32 @@ import Button from "./button";
 import Input from "./input";
 import List from "./list";
 import "./todoList.css";
-const inLocalStorage = () =>{
-  let inLocal = localStorage.getItem("list")
-  if(inLocal){
-    return JSON.parse(localStorage.getItem("list")) 
-  }else{
+const inLocalStorage = () => {
+  let inLocal = localStorage.getItem("list");
+  if (inLocal) {
+    return JSON.parse(localStorage.getItem("list"));
+  } else {
     return [];
   }
-}
+};
 function TodoList({ ids }) {
-  // console.log(props, "props")
   const [inputList, setInputList] = useState();
   const [todos, setTodos] = useState(inLocalStorage());
   const [toggle, setToggle] = useState(true);
   const [updateId, setUpdateId] = useState(null);
+  const [error, setError] = useState();
 
   const handleChange = (e) => {
     console.log(e, "handleChange");
     setInputList(e.target.value);
+    setError("")
   };
 
   const addingFunction = () => {
     if (!inputList) {
-      alert("Please Write Something in todo");
+      setError("Please Write Something in todo!");
+    }else if(!inputList.trim()){
+      setError("Please write something!")
     } else {
       const allInputData = {
         id: new Date().getTime().toString(),
@@ -35,9 +38,9 @@ function TodoList({ ids }) {
       setInputList("");
     }
   };
-  useEffect(()=>{
-    localStorage.setItem("list", JSON.stringify(todos))
-  }, [todos])
+  useEffect(() => {
+    localStorage.setItem("list", JSON.stringify(todos));
+  }, [todos]);
 
   const deleteFunction = (id) => {
     // console.log(index, "deleted");
@@ -55,7 +58,7 @@ function TodoList({ ids }) {
     setInputList(editVar.name);
     setUpdateId(id);
   };
-  const updateFunction = () =>{
+  const updateFunction = () => {
     setTodos(
       todos.map((updateVal, index) => {
         if (updateVal.id === updateId) {
@@ -67,10 +70,10 @@ function TodoList({ ids }) {
     setToggle(true);
     setInputList("");
     setUpdateId(null);
-  }
-  const removeAllFunction = ()=>{
+  };
+  const removeAllFunction = () => {
     setTodos([]);
-  }
+  };
 
   return (
     <>
@@ -99,6 +102,9 @@ function TodoList({ ids }) {
                 styleClass="add-button"
               />
             )}
+            <span className="errorSpan">{error}</span>
+          </div>
+          <div>
           </div>
           {todos.map((value) => {
             return (
@@ -111,7 +117,11 @@ function TodoList({ ids }) {
             );
           })}
           <div className="removeAllDiv">
-          <Button value="Remove All" styleClass="removeAllButton" onClick={removeAllFunction}/>
+            <Button
+              value="Remove All"
+              styleClass="removeAllButton"
+              onClick={removeAllFunction}
+            />
           </div>
         </div>
       </div>
